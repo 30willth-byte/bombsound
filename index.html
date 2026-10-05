@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+    </head>
+    <body>
+        <a-scene>
+            <a-sky color="blue" ></a-sky>
+           <a-camera><a-cursor fuse="true" fuse-timeout="200"></a-cursor></a-camera>
+            <a-assets>
+      <audio id="zipper" src="https://codehs.com/uploads/d235649a8b997ed7519690453d27650c" preload="auto"></audio>
+            </a-assets>
+
+<a-sphere position="-4 0 -6" color="rgb(0, 0, 0)" radius="1" id="bomb" sound="src: #zipper on: click">
+
+    animation__2="
+    property: scale;
+    from: 1 1 1;
+    to: 100 100 100;
+    dur: 3000;
+    startEvents: click;
+    "
+    animation__3="
+    property: color;
+    type: color;
+    from: rgb(0, 0, 0);
+    to: rgb(255, 0, 0);
+    dur: 100;
+    startEvents: click;
+    "></a-sphere>
+
+<a-sphere class="safe" position="-6 0 -6" color="green" radius="1"
+    animation__1="
+    property: scale;
+    from: 1 1 1;
+    to: 0 0 0;
+    dur: 1000;
+    startEvents: click;
+    "></a-sphere>
+<a-sphere class="safe" position="6 2 -6" color="green" radius="1"
+    animation__1="
+    property: scale;
+    from: 1 1 1;
+    to: 0 0 0;
+    dur: 1000;
+    startEvents: click;
+    "></a-sphere>
+    <a-sphere class="safe" position="9 0 -6" color="green" radius="1"
+    animation__1="
+    property: scale;
+    from: 1 1 1;
+    to: 0 0 0;
+    dur: 1000;
+    startEvents: click;
+    "></a-sphere>
+    <a-sphere class="safe" position="4 0 -6" color="green" radius="1"
+    animation__1="
+    property: scale;
+    from: 1 1 1;
+    to: 0 0 0;
+    dur: 1000;
+    startEvents: click;
+    "></a-sphere>
+    <a-sphere class="safe" position="-5 5 -6" color="green" radius="1"
+    animation__1="
+    property: scale;
+    from: 1 1 1;
+    to: 0 0 0;
+    dur: 1000;
+    startEvents: click;
+    "></a-sphere>
+    <a-sphere class="safe" position="-10 4 -6" color="green" radius="1"
+    animation__1="
+    property: scale;
+    from: 1 1 1;
+    to: 0 0 0;
+    dur: 1000;
+    startEvents: click;
+    "></a-sphere>
+        </a-scene>
+
+
+<script>
+(function() {
+    const scene = document.querySelector('a-scene'); 
+    const bomb = document.querySelector('#bomb'); 
+    const radius = 8;
+    let angle = 0;
+
+    function moveToRandom() {
+        angle += Math.PI / 2;
+        const x = radius * Math.sin(angle);
+        const z = -radius * Math.cos(angle);
+        bomb.setAttribute('animation', { 
+            property: 'position', to: `${x} 3 ${z}`, 
+            dur: 1100, easing: 'linear' 
+        }); 
+    } 
+
+    bomb.addEventListener('animationcomplete', moveToRandom); 
+    if (scene.hasLoaded) { moveToRandom(); } 
+    else { scene.addEventListener('loaded', moveToRandom); }
+})();
+</script>
+
+<script>
+(function() {
+    const scene = document.querySelector('a-scene'); 
+    const safeSpheres = document.querySelectorAll('.safe');
+    const radius = 8;
+
+    // give each sphere its own independent angle/speed/direction
+    const states = Array.from(safeSpheres).map(() => ({
+        angle: Math.random() * Math.PI * 2,
+        speed: (Math.PI / 2) * (Math.random() > 0.5 ? 1 : -1)
+    }));
+
+    function moveOne(el, state) {
+        state.angle += state.speed;
+        const x = radius * Math.sin(state.angle);
+        const z = -radius * Math.cos(state.angle);
+        el.setAttribute('animation', {
+            property: 'position', to: `${x} 3 ${z}`,
+            dur: 1100, easing: 'linear'
+        });
+    }
+
+    function start() {
+        safeSpheres.forEach((el, i) => {
+            el.addEventListener('animationcomplete', () => moveOne(el, states[i]));
+            moveOne(el, states[i]);
+        });
+    }
+
+    if (scene.hasLoaded) { start(); } 
+    else { scene.addEventListener('loaded', start); }
+})();
+</script>
+    </body>
+</html>
